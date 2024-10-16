@@ -7,15 +7,42 @@ import { Button } from "../../components/ui/button";
 import { Menu } from "lucide-react";
 import { ModeToggle } from "../components/Themetoggle";
 import { DropdownMenu, 
-    DropdownMenuItem, 
-    DropdownMenuContent, 
-    DropdownMenuLabel, 
-    DropdownMenuSeparator, 
-    DropdownMenuTrigger } from "../../components/ui/dropdown-menu";
-import { auth, signOut } from "../lib/auth";
+        DropdownMenuItem, 
+        DropdownMenuContent, 
+        DropdownMenuLabel, 
+        DropdownMenuSeparator, 
+        DropdownMenuTrigger } from "../../components/ui/dropdown-menu";
+import { signOut } from "../lib/auth";
+import { requireUser } from "../lib/hooks";
+import prisma from "../lib/db";
+import { redirect } from "next/navigation";
+
+async function getData(userId:string) {
+    const data= await prisma.user.findUnique({
+        where: {
+            id:userId
+        },
+        select: {
+            username: true,
+            grantId: true,
+        },
+
+    });
+
+    if(!data?.username){
+        return redirect("/onboarding");
+    }
+
+    if(!data.grantId)
+    {
+        return redirect("/onboarding/grant-id");
+    }
+    return data;
+}
 
 export default async function DashboardLayout({children}: {children: React.ReactNode}) {
-    const session = await auth();
+    const session = await requireUser();
+    const data= await getData(session.user?.id as string);
     
     return (
         <>
@@ -84,7 +111,7 @@ export default async function DashboardLayout({children}: {children: React.React
                         </DropdownMenu>
                     </div>
                 </header>
-                <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6 overflow-y-auto">
+                <main className="flex flex-1 flex-col gap-4 p-4 lg:gap-6 lg:p-6">
                     {children}
                 </main>
             </div>
