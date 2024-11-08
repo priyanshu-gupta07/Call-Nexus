@@ -19,11 +19,11 @@ export async function GET(req:NextRequest) {
 
     try {
         const response = await nylas.auth.exchangeCodeForToken({
-            clientId: nylasConfig.clientId,
             clientSecret: nylasConfig.apiKey,
+            clientId: nylasConfig.clientId,
             redirectUri: nylasConfig.redirectUri,
             code: code,
-        })
+          });
 
         const {grantId,email} = response;
 
@@ -39,8 +39,7 @@ export async function GET(req:NextRequest) {
 
     } catch (error) {
         console.log("Error something went wrong", error);
-
-    }
+    }  
 
     redirect("/dashboard"); 
 }
