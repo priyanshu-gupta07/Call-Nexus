@@ -1,8 +1,6 @@
 import prisma from "@/app/lib/db";
-import { nylas } from "@/app/lib/nylas";
 import { notFound } from "next/navigation";
 import React from "react";
-import { addDays } from "date-fns";
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { BookMarked, CalendarX2, Clock } from "lucide-react";
@@ -13,9 +11,6 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { SubmitButton } from "@/app/components/SubmitButton";
 import { createMeetingAction } from "@/app/actions";
-
-const targetDate = new Date(2024, 8, 19); // Note: month is 0-indexed, so 8 is September
-const nextDay = addDays(targetDate, 1);
 
 async function getData(userName: string, meetingName: string) {
   const data = await prisma.user.findUnique({
